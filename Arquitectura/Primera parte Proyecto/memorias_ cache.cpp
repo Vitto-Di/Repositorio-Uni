@@ -3,12 +3,12 @@
 
 using namespace std;
 
-typedef struct nodo{
+typedef struct nodo{    //Estructura de nodo tradiccional
     int valor;
     struct nodo *sig;
 }nodo;
 
-class cola{
+class cola{             //Cola especial para almacenar datos
     private:
         nodo *inicio;
         nodo *final;
@@ -18,7 +18,7 @@ class cola{
         void encolar(int);
         int desencolar();
         void vaciar(int);
-        void refresh(int);
+        void refresh(int);  //Borra todas las anteriores apariciones del elemento antes de ser encolado
         
 };
 
@@ -107,7 +107,7 @@ void cola::refresh(int elem){
 }
 
 
-class memory_2way{
+class memory_2way{       //Simula el comportamiento de una memoria de 2 vias y 4 bloques
     private:            //Atributos
         int bloque[4];
         int access_rec0,access_rec1;
@@ -198,7 +198,7 @@ int memory_2way::acceso(int dir){
 
     }
 
-    return acierto;
+    return acierto; 
 
 }
 
@@ -209,19 +209,19 @@ void memory_2way::mostrar(){
     cout<<endl;
 }
 
-int memory_2way::memory_get(int pos){
+int memory_2way::memory_get(int pos){ //Getter de la memoria
 
     return (bloque[pos]);
 }
 
-class memory_full{
+class memory_full{      //Simula el comportamiento de una memoria de 4 bloques y asociatividad completa
     private:
         int bloque[4];
-        cola _cola;
+        cola _cola;     //Historial de Accesos a la memoria
     public:
         memory_full();
         int acceso(int);
-        int memory_get(int);
+        int memory_get(int);  //Getter
 };
 
 memory_full::memory_full(){
@@ -234,7 +234,7 @@ int memory_full::acceso(int dir){
     _cola.refresh(dir); // Almacena historial de accesos en la cola
 
     for(i=0;i<4;i++){
-        if(bloque[i] == dir){
+        if(bloque[i] == dir){    //Busca coincidencia
             acierto = 1;break;
         }
     }
@@ -251,10 +251,10 @@ int memory_full::acceso(int dir){
         if( !listo ){
             int acceso_menos_reciente;
 
-            acceso_menos_reciente = _cola.desencolar();
+            acceso_menos_reciente = _cola.desencolar(); //Politica LRU
 
             for(i=0;i<4;i++){
-                if( bloque[i] == acceso_menos_reciente ){
+                if( bloque[i] == acceso_menos_reciente ){  //Aplicacion LRU
                     bloque[i] = dir;break;
                 }
             }
@@ -269,15 +269,15 @@ int memory_full::memory_get(int pos){
     return (bloque[pos]);
 }
 
-void ini_mat(int mat [][6],int filas);
+void ini_mat(int mat [][6],int filas);  //Inicializa matriz para evitar errores
 void corresp_directa(int mat [][6],int dir[],int filas);
 void asociativa_conj(int dir[],int filas);
 void Asociativa_completa(int dir[],int filas);
 
 int main(){
-    ifstream arch_in;
-    int direcciones[100];
-    string name;
+    ifstream arch_in;       //Archivo de entrada
+    int direcciones[100];   //Conjunto de direcciones leidas
+    string name;                
 
     system("clear");
 
@@ -292,7 +292,7 @@ int main(){
     }
 
     int i = -1;
-    while( !arch_in.eof() ){
+    while( !arch_in.eof() ){  //Lee direcciones hasta el EOF
         i++;
         arch_in>>*(direcciones+i);
     }
@@ -301,8 +301,10 @@ int main(){
 
     ini_mat(matriz,i);
 
-    arch_in.close();
+    arch_in.close();  //Cierra archivo
 
+
+    //Se llaman a los 3 métodos
     corresp_directa(matriz,direcciones,i);
     asociativa_conj(direcciones,i);
     Asociativa_completa(direcciones,i);
@@ -329,7 +331,7 @@ void corresp_directa(int mat [][6],int dir[],int filas){
     int aux;
 
     for(i=0;i < filas;i++){
-        bloque = (dir[i] % 4) + 2;
+        bloque = (dir[i] % 4) + 2; //Se obtiene la dir. del bloque correspondiente y se desplaza para adaptarse al arreglo
         mat[i][0] = dir[i];
 
         if( mat[i][bloque] == dir[i])
@@ -345,7 +347,7 @@ void corresp_directa(int mat [][6],int dir[],int filas){
     }
 
 
-    ofstream arch_out;
+    ofstream arch_out;  //Se crea archivo de salida
 
     arch_out.open("salida.out",ios::out);
 
@@ -376,7 +378,7 @@ void corresp_directa(int mat [][6],int dir[],int filas){
         arch_out<<endl;
     }
 
-    arch_out.close();
+    arch_out.close();  //Se cierra
 }
 
 void asociativa_conj(int dir[],int filas){
@@ -427,7 +429,7 @@ void Asociativa_completa(int dir[],int filas){
     arch_out<<"\n### Completamente Asociativa ###"<<endl;
     arch_out<<"                       |         |Contenido de los bloques de cache"<<endl;
     arch_out<<"  Dir. del bloque      | Acierto |       despúes de cada acceso "<<endl;
-    arch_out<<" de memoria accedido   | ó Fallo | Bloque 1 | Bloque 2 | Bloque 3 | Bloque 4 |"<<endl;
+    arch_out<<" de memoria accedido   | ó Fallo | Bloque 0 | Bloque 1 | Bloque 2 | Bloque 3 |"<<endl;
 
     for(i=0;i<filas;i++){
 

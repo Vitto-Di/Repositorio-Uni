@@ -8,8 +8,9 @@
 #include <sys/mman.h>
 
 #include "LIB/mem_cache.h"
+#include "LIB/mem_cacheL2.h"
 
-#define FILE_NAME ("creditcard.csv")
+#define FILE_NAME ("rockyou.txt")
 #define HIT 1
 
 using namespace std;
@@ -18,7 +19,8 @@ int main(){
     int fd;
     char *addr;
     struct stat statbf;
-    memory_full cache;  // Cache completamente asociativa de 16 bloques ( 1 palabra por bloque)
+    memory_full cacheL1;  // Cache completamente asociativa de 16 bloques ( 1 palabra por bloque)
+    memory_full2 cacheL2; // 32 bloques
 
     fd = open( FILE_NAME , O_RDONLY ); // Obtiene el file descriptor del fichero 
 
@@ -42,13 +44,19 @@ int main(){
     double tasa_a = 0.0;
 
     system("clear");
+
     for( size_t i = 0 ; i < statbf.st_size ; i++ ){  // Recorre byte por byte (Caracter por caracter)
         int aux;
         double pc; // Para mostrar porcentaje actual del proceso
 
-        aux = cache.acceso( *(addr + i) ); // Acceso a la cache con la dir. de byte actual
+        aux = cacheL1.acceso( *(addr + i) ); // Acceso a la cache con la dir. de byte actual
+        if ( aux == HIT ) 
+            hits++;
+        else{
+            aux = cacheL2.acceso( *(addr + i) );  // Acceso a L2 si L1 no es exitosa
+            if ( aux == HIT ) hits++; 
+        }
 
-        if ( aux == HIT ) hits++;
         pc = ( (double)i/statbf.st_size ) * 100;
         cout << "\rProcesando %"<< pc <<"         ";
     }

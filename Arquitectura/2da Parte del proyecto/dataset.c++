@@ -60,6 +60,7 @@ int main(){
         pc = ( (double)i/statbf.st_size ) * 100;
         cout << "\rProcesando %"<< pc <<"         ";
     }
+    cout << "Press enter"<<endl;
     cin.ignore();  // Press enter
     system("clear");
 

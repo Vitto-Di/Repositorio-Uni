@@ -19,8 +19,8 @@ int main(){
     int fd;
     char *addr;
     struct stat statbf;
-    memory_full cacheL1;  // Cache completamente asociativa de 16 bloques ( 1 palabra por bloque)
-    memory_full2 cacheL2; // 32 bloques
+    memory_full cacheL1;  // Cache completamente asociativa de 8 bloques ( 1 palabra por bloque)
+    memory_full2 cacheL2; // 16 bloques
 
     fd = open( FILE_NAME , O_RDONLY ); // Obtiene el file descriptor del fichero 
 
